@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  rtsp_server:
+    container_name: rtsp_server
+    restart: unless-stopped
+    networks:
+      - rtsp_network
+    image: bluenviron/mediamtx
+    ports:
+      - "8554:8554"
+    # This is an RTSP server running on port 8554
+
+  ffmpeg-rtsp:
+    container_name: rtsp_client
+    depends_on:
+      - rtsp_server
+    networks:
+      - rtsp_network
+    build: ./
+    environment:
+      - RTSP_PORT=8554
+      - RTSP_PATH=/test
+      - RTSP_ADDRESS=rtsp_server
+      - INPUT_FILE=video.mp4
+    volumes:
+      - ./:/home
+    # This is an FFmpeg client that connects to the RTSP server
+
+networks:
+  rtsp_network:
+    driver: bridge
+    # Use the bridge driver for the network

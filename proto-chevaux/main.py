@@ -15,7 +15,7 @@ cv2.namedWindow('Masked ROI', cv2.WINDOW_NORMAL)
 cv2.namedWindow('Extracted Shape', cv2.WINDOW_NORMAL)
 
 # Resize the window for the frame to specific dimensions
-cv2.resizeWindow('Frame', 1600, 1200)  # Adjust the size as needed
+cv2.resizeWindow('Frame', 700, 1000)  # Adjust the size as needed
 
 backSub = cv2.createBackgroundSubtractorMOG2()
 
@@ -33,7 +33,7 @@ def process_frame():
     while not stop_event.is_set():
         if frame_resized is not None:
             (class_ids, scores, boxes) = od.detect(frame_resized)
-        time.sleep(1)  # Run detection once per second
+        time.sleep(0.05)  # Run detection once per second
 
 # Start the processing thread
 processing_thread = threading.Thread(target=process_frame)
@@ -76,6 +76,7 @@ try:
 
             # Draw the bounding box on the original frame
             cv2.rectangle(frame_resized, (x, y), (x + w, y + h), (0, 255, 0), 5)
+            break
 
         # Display the resized frame with detection boxes
         cv2.imshow("Frame", frame_resized)

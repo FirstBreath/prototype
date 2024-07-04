@@ -5,9 +5,11 @@ import time
 from object_detection import ObjectDetection
 
 od = ObjectDetection()
-url = '../assets/cheval.mp4'
+url = ['../assets/cheval.mp4', '../assets/chev.mp4', '../assets/manger.mp4', '../assets/plusieurs.mp4']
+index = 0
 
-cap = cv2.VideoCapture(url)
+
+cap = cv2.VideoCapture(url[index])
 
 # Create named windows with the ability to resize
 cv2.namedWindow('Frame', cv2.WINDOW_NORMAL)
@@ -15,7 +17,7 @@ cv2.namedWindow('Masked ROI', cv2.WINDOW_NORMAL)
 cv2.namedWindow('Extracted Shape', cv2.WINDOW_NORMAL)
 
 # Resize the window for the frame to specific dimensions
-cv2.resizeWindow('Frame', 700, 1000)  # Adjust the size as needed
+cv2.resizeWindow('Frame', 1600, 800)  # Adjust the size as needed
 
 backSub = cv2.createBackgroundSubtractorMOG2()
 
@@ -46,8 +48,12 @@ try:
 
         ret, frame = cap.read()
         if not ret:
-            # If we reach the end of the video, reset to the first frame
-            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            # # If we reach the end of the video, reset to the first frame
+            # cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            index += 1
+            if (index >= len(url)):
+                index = 0
+            cap = cv2.VideoCapture(url[index])
             continue
 
         # Resize the frame to be 2 times larger for display
@@ -59,7 +65,8 @@ try:
         for box in boxes:
             (x, y, w, h) = box
             roi = frame_resized[y:y+h, x:x+w]
-        
+            if roi.size == 0:
+                continue
             # Apply background subtraction to the ROI
             fgMask = backSub.apply(roi)
             
@@ -75,7 +82,7 @@ try:
             masked_roi_frame = masked_roi_bgr  # Update the masked ROI frame
 
             # Draw the bounding box on the original frame
-            cv2.rectangle(frame_resized, (x, y), (x + w, y + h), (0, 255, 0), 5)
+            cv2.rectangle(frame_resized, (x, y), (x + w, y + h), (0, 255, 0), 10)
             break
 
         # Display the resized frame with detection boxes

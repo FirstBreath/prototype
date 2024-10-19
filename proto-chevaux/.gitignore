@@ -1,2 +1,3 @@
 *.mp4
 dnn_model
+__pycache__
